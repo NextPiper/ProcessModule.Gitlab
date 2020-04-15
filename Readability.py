@@ -61,7 +61,7 @@ class CodeAnalyser:
         details[FILE_LENGTH] = file_length_penalty * FILE_LENGTH_CONST
         details[SYMBOL_RATIO] = symbol_score * SYMBOL_CONST
         details[CODE_BLOCK_SIZE] = block_score * CODE_BLOCK_CONST
-        details[UNCOMMETEDMETHODS]= methodcomments * UNCOMMETEDMETHODS_CONST
+        details[UNCOMMETEDMETHODS] = methodcomments * UNCOMMETEDMETHODS_CONST
 
         return details
 
@@ -145,7 +145,7 @@ class CodeAnalyser:
             sum += block
         return sum / float(max(1, len(blocks)))
 
-    def compute_amount_of_ucommented_method(self, lines):
+    def compute_amount_of_ucommented_methods(self, lines):
         methods = 0
         methodcomment = 0
         previousLine = None
