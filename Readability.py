@@ -6,6 +6,8 @@ from CodeSummary import CodeSummary
 from LanguageDescriptor import LanguageDescriptor
 
 # String identifier constants and a constant to determine that weight in a linear combination scenario
+from MethodInfo import MethodInfo
+
 AVG_LINE_LENGTH = "average_line_length"
 AVG_LINE_CONST = 1.0
 
@@ -46,6 +48,8 @@ class CodeAnalyser:
         symbol_score = self.symbol_score(code, lines)
         block_score = self.compute_average_code_block_size(lines)
         methodcomments = self.compute_amount_of_ucommented_method(lines)
+        method_length_score = self.compute_method_length_score(lines)
+
 
         # ****** Store the different metric ******
         details = {}
@@ -154,11 +158,32 @@ class CodeAnalyser:
     def compute_method_length_score(self, lines):
 
         methods = []
-        currentMethod = []
+
+        methodInfo = None
 
         for line in lines:
+
             if (self.language_Descriptor.is_Method(line)):
-                currentMethod.append("{")
+                # Encountered a method, create methodInfo object and close previous method
+                if methodInfo:
+                    methods.append(methodInfo)
+                    methodInfo = None
+                # Create next method info object
+                methodInfo = MethodInfo(line)
+                continue
+
+            if(methodInfo):
+                if methodInfo.isClosed:
+                    methods.append(methodInfo)
+                    methodInfo = None
+                else:
+                    methodInfo.readLine(line)
+                    continue
+
+        print("done")
+
+
+
 
 if __name__ == '__main__':
 
