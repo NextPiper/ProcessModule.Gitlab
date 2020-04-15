@@ -1,4 +1,4 @@
-#!/Users/magnus/Documents/GitHub/NextPipe/ProcessModule/venv/bin/python
+#!/Users/magnus/Coding/PycharmProjects/ProcessModule/Venv/bin/python
 # EASY-INSTALL-ENTRY-SCRIPT: 'setuptools==39.1.0','console_scripts','easy_install'
 __requires__ = 'setuptools==39.1.0'
 import re
