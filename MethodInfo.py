@@ -92,6 +92,8 @@ class MethodInfo:
     def compute_comment_ratio(self,lengthOfMethod,amountOfComment):
         if lengthOfMethod != 0 and amountOfComment != 0:
             self.commentRatio = lengthOfMethod / amountOfComment
+        if lengthOfMethod != 0 and amountOfComment == 0:
+            self.commentRatio = lengthOfMethod
 
 class Node:
 
