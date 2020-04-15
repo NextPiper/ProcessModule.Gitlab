@@ -3,8 +3,6 @@ import re as regex
 
 class LanguageDescriptor:
 
-
-
     cSharpMethod = regex.compile(
         r'\b(public|private|internal|protected)\s*(static|virtual|abstract)?\s*[a-zA-Z<>]*\s[a-zA-Z1-9_<>]+\s?\s*[a-zA-Z1-9<>_]*\((([a-zA-Z1-9_="\[\]\<\>]*\s*[a-zA-Z1-9_="]*\s*)[,]?\s*)+\)')
     reDictonary = {'.cs': cSharpMethod }

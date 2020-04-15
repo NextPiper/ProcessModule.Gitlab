@@ -151,6 +151,15 @@ class CodeAnalyser:
         print(methods)
         return uncommentedMethods
 
+    def compute_method_length_score(self, lines):
+
+        methods = []
+        currentMethod = []
+
+        for line in lines:
+            if (self.language_Descriptor.is_Method(line)):
+                currentMethod.append("{")
+
 if __name__ == '__main__':
 
     file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Events/Handlers/ModulesEventHandler.cs"
