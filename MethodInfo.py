@@ -7,7 +7,7 @@ class MethodInfo:
         self.methodDeclaration = methodDeclaration
         self.parameterList = []
         self.isClosed = False
-        self.language_descriptor
+        self.language_descriptor = language_descriptor
 
         self.indentation = []
         self.methodLength = 0
@@ -21,7 +21,6 @@ class MethodInfo:
         # Analyse the method declaration and rea number of parameters
         self.analyseNumberOfParameters()
         # Calculate score of ratio between comment and length of method
-        self.compute_comment_ratio()
 
     def analyseNumberOfParameters(self):
 
@@ -59,7 +58,7 @@ class MethodInfo:
         lineSplit = line.split()
         if len(lineSplit) != 0:
             self.methodLength += 1
-            if self.languageDescriptor.is_Comment(lineSplit):
+            if self.language_descriptor.is_Comment(line):
                 self.linesOfComments += 1
         for char in line:
             if char == "\"" or char == "\'":
@@ -106,11 +105,12 @@ class MethodInfo:
     def get_method_tree(self):
         return self.methodTreeRoot
 
-    def compute_comment_ratio(self,lengthOfMethod,amountOfComment):
-        if lengthOfMethod != 0 and amountOfComment != 0:
-            self.commentRatio = lengthOfMethod / amountOfComment
-        if lengthOfMethod != 0 and amountOfComment == 0:
-            self.commentRatio = lengthOfMethod
+    def compute_comment_ratio(self):
+        if self.methodLength != 0 and self.linesOfComments != 0:
+            self.commentRatio = self.methodLength / self.linesOfComments
+        if self.methodLength != 0 and self.linesOfComments == 0:
+            self.commentRatio = self.methodLength
+
     def previousLineInfoRequired(self, line):
 
         prevChar = ""
