@@ -1,5 +1,5 @@
 import re as regex
-
+import LanguageDescriptor as lD
 TOKEN_REGEX = regex.compile(r'(\W+)', flags=regex.UNICODE)
 
 class MethodInfo:
@@ -11,6 +11,8 @@ class MethodInfo:
 
         self.indentation = []
         self.methodLength = 0
+        self.linesOfComments = 0
+        self.commentRatio = 0
 
         self.methodTreeRoot = None
         self.methodTreeCursor = None
@@ -18,6 +20,8 @@ class MethodInfo:
 
         # Analyse the method declaration and rea number of parameters
         self.analyseNumberOfParameters()
+        # Calculate score of ratio between comment and length of method
+        self.compute_comment_ratio()
 
     def analyseNumberOfParameters(self):
 
@@ -55,6 +59,8 @@ class MethodInfo:
         lineSplit = line.split()
         if len(lineSplit) != 0:
             self.methodLength += 1
+            if lD.LanguageDescriptor.is_Comment(lineSplit):
+                self.linesOfComments += 1
         for char in line:
             if char == "\"" or char == "\'":
                 if inComment:
@@ -100,6 +106,11 @@ class MethodInfo:
     def get_method_tree(self):
         return self.methodTreeRoot
 
+    def compute_comment_ratio(self,lengthOfMethod,amountOfComment):
+        if lengthOfMethod != 0 and amountOfComment != 0:
+            self.commentRatio = lengthOfMethod / amountOfComment
+        if lengthOfMethod != 0 and amountOfComment == 0:
+            self.commentRatio = lengthOfMethod
     def previousLineInfoRequired(self, line):
 
         prevChar = ""
