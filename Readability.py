@@ -48,7 +48,7 @@ class CodeAnalyser:
         symbol_score = self.symbol_score(code, lines)
         block_score = self.compute_average_code_block_size(lines)
         methodcomments = self.compute_amount_of_ucommented_method(lines)
-        method_length_score = self.compute_method_length_score(lines)
+        method_length_score = self.compute_method_info(lines)
 
 
         # ****** Store the different metric ******
@@ -155,10 +155,9 @@ class CodeAnalyser:
         print(methods)
         return uncommentedMethods
 
-    def compute_method_length_score(self, lines):
+    def compute_method_info(self, lines):
 
         methods = []
-
         methodInfo = None
 
         for line in lines:
@@ -178,11 +177,8 @@ class CodeAnalyser:
                     methodInfo = None
                 else:
                     methodInfo.readLine(line)
-                    continue
 
-        print("done")
-
-
+        return methods
 
 
 if __name__ == '__main__':

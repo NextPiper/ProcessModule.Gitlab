@@ -14,6 +14,7 @@ class MethodInfo:
 
         self.methodTreeRoot = None
         self.methodTreeCursor = None
+        self.previousLine = None
 
         # Analyse the method declaration and rea number of parameters
         self.analyseNumberOfParameters()
@@ -49,13 +50,23 @@ class MethodInfo:
 
     def readLine(self, line):
 
+        inComment = False
+
         lineSplit = line.split()
         if len(lineSplit) != 0:
             self.methodLength += 1
         for char in line:
+            if char == "\"" or char == "\'":
+                if inComment:
+                    inComment = False
+                else:
+                    inComment = True
+                continue
+            if inComment:
+                continue
             if char == '{':
                 self.indentation.append('{')
-                self.add_node()
+                self.add_node(line)
             if char == '}':
                 self.backtrack_method_tree()
                 # Check if we can remove an in item
@@ -67,27 +78,52 @@ class MethodInfo:
                     if len(self.indentation) == 0:
                         self.isClosed = True
                         break
+        self.previousLine = line
 
     def backtrack_method_tree(self):
         self.methodTreeCursor = self.methodTreeCursor.get_parent()
 
     def initialize_method_tree(self):
-        self.methodTreeCursor = Node(None)
+        self.methodTreeCursor = Node(None, None)
         self.methodTreeRoot = self.methodTreeCursor
 
-    def add_node(self):
-        node = Node(self.methodTreeCursor)
+    def add_node(self, originLine):
+
+        line = originLine
+        if self.previousLineInfoRequired(originLine):
+            line = self.previousLine + originLine
+
+        node = Node(self.methodTreeCursor, line)
         self.methodTreeCursor.appendChild(node)
         self.methodTreeCursor = node
 
     def get_method_tree(self):
         return self.methodTreeRoot
 
+    def previousLineInfoRequired(self, line):
+
+        prevChar = ""
+        tokens = TOKEN_REGEX.split(line)
+
+        for token in tokens:
+            splitToken = token.split()
+            if len(splitToken) != 0:
+
+                # We reached the start check if there where any prevChar
+                if token[0] == "{" :
+                    if len(prevChar) == 0:
+                        return True
+                    else:
+                        return False
+                prevChar += token[0]
+        return True
+
 class Node:
 
-    def __init__(self, parent_node):
+    def __init__(self, parent_node, originLine):
         self.parent_node = parent_node
         self.childrens = []
+        self.originLine = originLine
 
     def appendChild(self, node):
         self.childrens.append(node)
