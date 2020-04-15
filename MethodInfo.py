@@ -1,13 +1,13 @@
 import re as regex
-import LanguageDescriptor as lD
 TOKEN_REGEX = regex.compile(r'(\W+)', flags=regex.UNICODE)
 
 class MethodInfo:
 
-    def __init__(self, methodDeclaration):
+    def __init__(self, methodDeclaration, language_descriptor):
         self.methodDeclaration = methodDeclaration
         self.parameterList = []
         self.isClosed = False
+        self.language_descriptor
 
         self.indentation = []
         self.methodLength = 0
@@ -59,7 +59,7 @@ class MethodInfo:
         lineSplit = line.split()
         if len(lineSplit) != 0:
             self.methodLength += 1
-            if lD.LanguageDescriptor.is_Comment(lineSplit):
+            if self.languageDescriptor.is_Comment(lineSplit):
                 self.linesOfComments += 1
         for char in line:
             if char == "\"" or char == "\'":

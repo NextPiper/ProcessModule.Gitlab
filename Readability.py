@@ -174,7 +174,7 @@ class CodeAnalyser:
                     methods.append(methodInfo)
                     methodInfo = None
                 # Create next method info object
-                methodInfo = MethodInfo(line)
+                methodInfo = MethodInfo(line, self.language_Descriptor)
                 continue
 
             if(methodInfo):
@@ -182,7 +182,7 @@ class CodeAnalyser:
                     methods.append(methodInfo)
                     methodInfo = None
                 else:
-                    methodInfo.readLine(line)
+                    methodInfo.readLine(line, self.language_Descriptor)
 
         return methods
 
