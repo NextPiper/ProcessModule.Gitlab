@@ -18,6 +18,9 @@ SYMBOL_CONST = 20.0
 CODE_BLOCK_SIZE = "code_block_size"
 CODE_BLOCK_CONST = 1.0
 
+UNCOMMETEDMETHODS = "uncommented_method"
+UNCOMMETEDMETHODS_CONST = 1.0
+
 TOKEN_REGEX = regex.compile(r'(\W+)', flags=regex.UNICODE)
 
 class CodeAnalyser:
@@ -54,6 +57,7 @@ class CodeAnalyser:
         details[FILE_LENGTH] = file_length_penalty * FILE_LENGTH_CONST
         details[SYMBOL_RATIO] = symbol_score * SYMBOL_CONST
         details[CODE_BLOCK_SIZE] = block_score * CODE_BLOCK_CONST
+        details[UNCOMMETEDMETHODS]= methodcomments * UNCOMMETEDMETHODS_CONST
 
         return details
 
@@ -139,16 +143,18 @@ class CodeAnalyser:
 
     def compute_amount_of_ucommented_method(self, lines):
         methods = 0
-        comment = 0
+        methodcomment = 0
+        previousLine = None
         for line in lines:
-            if self.language_Descriptor.is_Comment(line):
-                comment += 1
-                continue
             if self.language_Descriptor.is_Method(line):
                 methods += 1
-                continue
-        uncommentedMethods = methods - comment;
-        print(methods)
+                if self.language_Descriptor.is_Comment(previousLine):
+                    methodcomment += 1
+            lineStrip = line.strip()
+            if not lineStrip == '':
+                previousLine = line
+        uncommentedMethods = methods - methodcomment
+        print(uncommentedMethods)
         return uncommentedMethods
 
     def compute_method_length_score(self, lines):
@@ -162,7 +168,8 @@ class CodeAnalyser:
 
 if __name__ == '__main__':
 
-    file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Events/Handlers/ModulesEventHandler.cs"
+    file = "/Users/magnus/Documents/GitHub/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
+    #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Events/Handlers/ModulesEventHandler.cs"
     #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Commands/Handlers/BackgroundProcessCommandHandler.cs"
     #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
     #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe/Controllers/ModuleController.cs"
