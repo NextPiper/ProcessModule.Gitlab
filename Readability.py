@@ -208,6 +208,14 @@ class CodeAnalyser:
                 amountofparametes += 1
         return sumofparameterlength/amountofparametes
 
+    def penalty_for_long_method(self, methodInfoList):
+        penalty = 0
+        for methodinfo in methodInfoList:
+            if methodinfo.methodLength > 20:
+                penalty += math.pow(math.sqrt(methodinfo.methodLength)-2,2)
+        return penalty
+
+
 
 
 if __name__ == '__main__':
