@@ -9,7 +9,7 @@ from LanguageDescriptor import LanguageDescriptor
 from MethodInfo import MethodInfo
 
 AVG_LINE_LENGTH = "average_line_length"
-AVG_LINE_CONST = 1.0
+AVG_LINE_CONST = 0.4
 
 FILE_LENGTH ="class_length"
 FILE_LENGTH_CONST = 1.0
@@ -22,6 +22,21 @@ CODE_BLOCK_CONST = 1.0
 
 UNCOMMETEDMETHODS = "uncommented_method"
 UNCOMMETEDMETHODS_CONST = 1.0
+
+AVG_COMMENT_RATIO = "average_method_comment_ratio"
+AVG_COMMENT_RATIO_CONST = 1.0
+
+AVG_PARAMETER_LENGTH = "average_method_parameter_length"
+AVG_PARAMETER_LENGTH_CONST = 1.0
+
+AVG_METHOD_NESTING = "average_method_nesting"
+AVG_METHOD_NESTING_CONST = 1.0
+
+AVG_METHOD_COMPLEXITY = "average_method_complexityt"
+AVG_METHOD_COMPLEXITY_CONST = 1.0
+
+LONG_METHOD_PENALTY = "long_method_penalty"
+LONG_METHOD_PENALTY_CONST = 1.0
 
 TOKEN_REGEX = regex.compile(r'(\W+)', flags=regex.UNICODE)
 
@@ -58,6 +73,7 @@ class CodeAnalyser:
         avg_parameter_length = self.average_out_parameterlenght(method_info_list)
         avg_method_nesting_penalty = self.average_method_nesting_penalty(method_info_list)
         avg_method_complexity = self.average_method_complexity(method_info_list)
+        long_method_penalty = self.penalty_for_long_method(method_info_list)
 
         # ****** Store the different metric ******
         details = {}
@@ -67,6 +83,11 @@ class CodeAnalyser:
         details[SYMBOL_RATIO] = symbol_score * SYMBOL_CONST
         details[CODE_BLOCK_SIZE] = block_score * CODE_BLOCK_CONST
         details[UNCOMMETEDMETHODS] = methodcomments * UNCOMMETEDMETHODS_CONST
+        details[AVG_COMMENT_RATIO] = avg_comment_ratio * AVG_COMMENT_RATIO_CONST
+        details[AVG_PARAMETER_LENGTH] = avg_parameter_length * AVG_PARAMETER_LENGTH_CONST
+        details[AVG_METHOD_NESTING] = avg_method_nesting_penalty * AVG_METHOD_NESTING_CONST
+        details[AVG_METHOD_COMPLEXITY] = avg_method_complexity * AVG_METHOD_COMPLEXITY_CONST
+        details[LONG_METHOD_PENALTY] = long_method_penalty * LONG_METHOD_PENALTY_CONST
 
         return details
 
@@ -198,7 +219,10 @@ class CodeAnalyser:
         sumofcommentratio = 0
         for methodinfo in methodInfoList:
             sumofcommentratio += methodinfo.commentRatio
-        return sumofcommentratio/len(methodInfoList)
+
+        if len(methodInfoList) != 0:
+            return sumofcommentratio/len(methodInfoList)
+        return 0
 
     def average_out_parameterlenght(self, methodInfoList):
         sumofparameterlength = 0
@@ -207,6 +231,8 @@ class CodeAnalyser:
             if len(methodinfo.parameterList) != 0:
                 sumofparameterlength += len(methodinfo.parameterList)
                 amountofparametes += 1
+        if amountofparametes == 0:
+            return 0
         return sumofparameterlength/amountofparametes
 
     def penalty_for_long_method(self, methodInfoList):
@@ -253,12 +279,12 @@ if __name__ == '__main__':
     #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe/Controllers/ModuleController.cs"
     file = "/Users/ulriksandberg/Desktop/Reactors/Reactors/ClientApp/src/App.js"
 
-    languageDescriptor = LanguageDescriptor(
+    csharpLanguageDescriptor = LanguageDescriptor(
         lang_prefix=".cs",
         commentTokens=["//", "/*"],
         methodOperators=['if','else','do','while','for','foreach','catch','try','get','set'])
 
-    analyser = CodeAnalyser(languageDescriptor)
+    analyser = CodeAnalyser(csharpLanguageDescriptor)
 
     codeSummary = analyser.compute_code_score(file)
 
