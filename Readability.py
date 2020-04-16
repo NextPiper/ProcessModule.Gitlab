@@ -51,11 +51,13 @@ class CodeAnalyser:
         symbol_score = self.symbol_score(code, lines)
         block_score = self.compute_average_code_block_size(lines)
         methodcomments = self.compute_amount_of_ucommented_methods(lines)
-        method_info_list = self.compute_method_info(lines)
 
         #*********** Calculate average of the parameters in method info ***********
+        method_info_list = self.compute_method_info(lines)
         avg_comment_ratio= self.average_out_commentratio(method_info_list)
         avg_parameter_length = self.average_out_parameterlenght(method_info_list)
+        avg_method_nesting_penalty = self.average_method_nesting_penalty(method_info_list)
+        avg_method_complexity = self.average_method_complexity(method_info_list)
 
         # ****** Store the different metric ******
         details = {}
@@ -190,7 +192,6 @@ class CodeAnalyser:
                     methodInfo = None
                 else:
                     methodInfo.readLine(line)
-
         return methods
 
     def average_out_commentratio(self, methodInfoList):
@@ -208,15 +209,41 @@ class CodeAnalyser:
                 amountofparametes += 1
         return sumofparameterlength/amountofparametes
 
+    def average_method_nesting_penalty(self, methodInfoList):
+        sum_nesting = 0.0
+
+        for methodInfo in methodInfoList:
+            sum_nesting += methodInfo.methodFlowDetails.depth
+
+        if(len(methodInfoList) != 0):
+            return sum_nesting / len(methodInfoList)
+        else:
+            return 0
+
+    def average_method_complexity(self, methodInfoList):
+
+        accumulatedInfoScore = 0
+
+        for methodInfo in methodInfoList:
+            methodInfoScore = 0.0
+            for parameter in methodInfo.methodFlowDetails.methodOperators:
+                methodInfoScore += math.pow(parameter.depth,2)
+            accumulatedInfoScore += methodInfoScore
+
+        if(len(methodInfoList) == 0):
+            return 0.0
+        else:
+            return accumulatedInfoScore / len(methodInfoList)
 
 
 if __name__ == '__main__':
 
-    file = "/Users/magnus/Documents/GitHub/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
+    #file = "/Users/magnus/Documents/GitHub/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
     #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Events/Handlers/ModulesEventHandler.cs"
     #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Commands/Handlers/BackgroundProcessCommandHandler.cs"
     #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
     #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe/Controllers/ModuleController.cs"
+    file = "/Users/ulriksandberg/Desktop/Reactors/Reactors/ClientApp/src/App.js"
 
     languageDescriptor = LanguageDescriptor(
         lang_prefix=".cs",
