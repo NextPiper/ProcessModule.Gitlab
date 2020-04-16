@@ -1,4 +1,5 @@
 import re as regex
+import enum
 TOKEN_REGEX = regex.compile(r'(\W+)', flags=regex.UNICODE)
 
 class MethodInfo:
@@ -17,6 +18,7 @@ class MethodInfo:
         self.methodTreeRoot = None
         self.methodTreeCursor = None
         self.previousLine = None
+        self.methodFlowDetails = None
 
         # Analyse the method declaration and rea number of parameters
         self.analyseNumberOfParameters()
@@ -129,15 +131,65 @@ class MethodInfo:
                 prevChar += token[0]
         return True
 
+    def walk_tree(self):
+        node_cursor = self.methodTreeRoot
+        methodFlowDetails = MethodFlowDetails()
+        self.methodFlowDetails = self.walk_tree_rec(node_cursor, methodFlowDetails)
+
+    def walk_tree_rec(self, node, methodFlowDetails):
+
+        # setDepthOfCurrenNode as details
+        methodFlowDetails.set_Depth(node.get_depth())
+        find_flow_keyword = self.find_flow_keyword(node.originLine)
+        if find_flow_keyword:
+            methodFlowDetails.set_methodOperator(find_flow_keyword, node.get_depth())
+
+        for child in node.childrens:
+            self.walk_tree_rec(child, methodFlowDetails)
+
+        return methodFlowDetails
+
+    def find_flow_keyword(self, line):
+        if line:
+            return self.language_descriptor.identify_operator(line)
+        return None
+
 class Node:
 
     def __init__(self, parent_node, originLine):
         self.parent_node = parent_node
         self.childrens = []
         self.originLine = originLine
+        if parent_node:
+            self.depth = parent_node.get_depth() + 1
+        else:
+            self.depth = 0
 
     def appendChild(self, node):
         self.childrens.append(node)
 
     def get_parent(self):
         return self.parent_node
+
+    def get_depth(self):
+        return self.depth
+
+
+class MethodFlowDetails:
+
+    def __init__(self):
+        self.depth = 0
+        self.methodOperators = []
+
+    def set_Depth(self, depth):
+        if self.depth < depth:
+            self.depth = depth
+
+    def set_methodOperator(self, methodOperator, depth):
+        self.methodOperators.append(MethodOperator(methodOperator, depth))
+
+class MethodOperator:
+
+    def __init__(self, methodOperator, depth):
+        self.methodOperator = methodOperator
+        self.depth = depth
