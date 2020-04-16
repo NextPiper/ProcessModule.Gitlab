@@ -209,6 +209,14 @@ class CodeAnalyser:
                 amountofparametes += 1
         return sumofparameterlength/amountofparametes
 
+    def penalty_for_long_method(self, methodInfoList):
+        penalty = 0
+        for methodinfo in methodInfoList:
+            if methodinfo.methodLength > 20:
+                penalty += math.pow(math.sqrt(methodinfo.methodLength)-2,2)
+        return penalty
+
+
     def average_method_nesting_penalty(self, methodInfoList):
         sum_nesting = 0.0
 
