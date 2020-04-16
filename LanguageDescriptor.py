@@ -7,9 +7,10 @@ class LanguageDescriptor:
         r'\b(public|private|internal|protected)\s*(static|virtual|abstract)?\s*[a-zA-Z<>]*\s[a-zA-Z1-9_<>]+\s?\s*[a-zA-Z1-9<>_]*\((([a-zA-Z1-9_="\[\]\<\>]*\s*[a-zA-Z1-9_="]*\s*)[,]?\s*)+\)')
     reDictonary = {'.cs': cSharpMethod }
 
-    def __init__(self, lang_prefix, commentTokens):
+    def __init__(self, lang_prefix, commentTokens, methodOperators):
         self.lang_prefix = lang_prefix
         self.commentTokens = commentTokens
+        self.methodOperators = methodOperators
 
     def is_Comment(self, line):
         stripLine = line.strip()
@@ -24,4 +25,10 @@ class LanguageDescriptor:
         match = re.search(stripLine)
         if match:
             return True
-        return False
+        return
+
+    def identify_operator(self, line):
+        for methodOperator in self.methodOperators:
+            if line.find(methodOperator) != -1:
+                return methodOperator
+        return None

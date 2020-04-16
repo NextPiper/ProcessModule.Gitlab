@@ -172,6 +172,7 @@ class CodeAnalyser:
                 if methodInfo:
                     methods.append(methodInfo)
                     methodInfo.compute_comment_ratio()
+                    methodInfo.walk_tree()
                     methodInfo = None
                 # Create next method info object
                 methodInfo = MethodInfo(line, self.language_Descriptor)
@@ -181,6 +182,7 @@ class CodeAnalyser:
                 if methodInfo.isClosed:
                     methods.append(methodInfo)
                     methodInfo.compute_comment_ratio()
+                    methodInfo.walk_tree()
                     methodInfo = None
                 else:
                     methodInfo.readLine(line)
@@ -198,7 +200,8 @@ if __name__ == '__main__':
 
     languageDescriptor = LanguageDescriptor(
         lang_prefix=".cs",
-        commentTokens=["//", "/*"])
+        commentTokens=["//", "/*"],
+        methodOperators=['if','else','do','while','for','foreach','catch','try','get','set'])
 
     analyser = CodeAnalyser(languageDescriptor)
 
