@@ -51,7 +51,11 @@ class CodeAnalyser:
         symbol_score = self.symbol_score(code, lines)
         block_score = self.compute_average_code_block_size(lines)
         methodcomments = self.compute_amount_of_ucommented_methods(lines)
-        method_length_score = self.compute_method_info(lines)
+        method_info_list = self.compute_method_info(lines)
+
+        #*********** Calculate average of the parameters in method info ***********
+        avg_comment_ratio= self.average_out_commentratio(method_info_list)
+        avg_parameter_length = self.average_out_parameterlenght(method_info_list)
 
         # ****** Store the different metric ******
         details = {}
@@ -187,11 +191,27 @@ class CodeAnalyser:
 
         return methods
 
+    def average_out_commentratio(self, methodInfoList):
+        sumofcommentratio = 0
+        for methodinfo in methodInfoList:
+            sumofcommentratio += methodinfo.commentRatio
+        return sumofcommentratio/len(methodInfoList)
+
+    def average_out_parameterlenght(self, methodInfoList):
+        sumofparameterlength = 0
+        amountofparametes = 0
+        for methodinfo in methodInfoList:
+            if len(methodinfo.parameterList) != 0:
+                sumofparameterlength += len(methodinfo.parameterList)
+                amountofparametes += 1
+        return sumofparameterlength/amountofparametes
+
+
 
 if __name__ == '__main__':
 
-    #file = "/Users/magnus/Documents/GitHub/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
-    file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Events/Handlers/ModulesEventHandler.cs"
+    file = "/Users/magnus/Documents/GitHub/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
+    #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Events/Handlers/ModulesEventHandler.cs"
     #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Commands/Handlers/BackgroundProcessCommandHandler.cs"
     #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
     #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe/Controllers/ModuleController.cs"
