@@ -54,7 +54,13 @@ class CodeAnalyser:
         # Pass the lines array an compute a detailed score
         score_dic = self.compute_detailed_code_score(file, lines)
 
-        return CodeSummary(score_dic)
+        codeSummary = CodeSummary(score_dic)
+        codeSummary.addBaseScoreIdentifier(AVG_LINE_LENGTH)
+        codeSummary.addBaseScoreIdentifier(FILE_LENGTH)
+        codeSummary.addBaseScoreIdentifier(SYMBOL_RATIO)
+        codeSummary.addBaseScoreIdentifier(CODE_BLOCK_SIZE)
+
+        return codeSummary
 
     # Calls different code metrics and performs an analyses
     def compute_detailed_code_score(self, code, lines):
@@ -294,5 +300,3 @@ class CodeAnalyser:
         #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
         #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe/Controllers/ModuleController.cs"
         #file = "/Users/ulriksandberg/Desktop/Reactors/Reactors/ClientApp/src/App.js"
-
-
