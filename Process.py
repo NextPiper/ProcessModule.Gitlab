@@ -12,8 +12,8 @@ time.sleep(10)
 
 print('Getting Rabbitmq Configuration form control-plane')
 
-#r = requests.get('http://nextpipe-service.default.svc.cluster.local:5555/core/config/rabbitmq?loadBalancer=false')
-r = requests.get('http://localhost:5555/core/config/rabbitmq?loadBalancer=false')
+r = requests.get('http://nextpipe-service.default.svc.cluster.local:5555/core/config/rabbitmq?loadBalancer=false')
+#r = requests.get('http://localhost:5555/core/config/rabbitmq?loadBalancer=false')
 print("status code of http request to nextpipe: ",r.status_code)
 r.headers['content-type']
 r.encoding
@@ -28,8 +28,8 @@ GITLAB_COMMIT_EXCHANGE = "gitlab-commitexchange"
 GITLAB_COMMIT_QUEUE = "ConsoleConsumer-987654321"
 
 print(' [*] Connecting to server ...')
-connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost",port=response['port'],credentials=pika.PlainCredentials(username=response['username'],password=response['password'])))
-#connection = pika.BlockingConnection(pika.ConnectionParameters(host=response['hostname'],port=response['port'],credentials=pika.PlainCredentials(username=response['username'],password=response['password'])))
+#connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost",port=response['port'],credentials=pika.PlainCredentials(username=response['username'],password=response['password'])))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host=response['hostname'],port=response['port'],credentials=pika.PlainCredentials(username=response['username'],password=response['password'])))
 channel = connection.channel()
 
 channel.exchange_declare(exchange=GITLAB_COMMIT_EXCHANGE,

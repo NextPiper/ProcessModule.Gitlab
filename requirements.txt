@@ -1,3 +1,6 @@
 requests==2.23.0
 pika==1.1.0
+regex==2020.4.4
+requests==2.23.0
+
 
