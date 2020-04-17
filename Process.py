@@ -43,16 +43,7 @@ print(' [*] Waiting for messages.')
 def callback(ch, method, properties, body):
     print(" [x] Received %s" % body)
 
-    #x = json.loads(body, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
-
     x = json.loads(body)
-
-    files = x['CommitedFiles'][0]['content']
-
-
-    x['AverageCommitScore'] = 0
-
-    print(x)
 
     csharpLanguageDescriptor = LanguageDescriptor(
         lang_prefix=".cs",

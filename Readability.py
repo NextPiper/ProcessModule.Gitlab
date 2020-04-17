@@ -277,6 +277,7 @@ class CodeAnalyser:
 
     def score_files_readability(self, jsonobject):
         i = 0
+        commitscore = 0
         files = jsonobject['CommitedFiles']
         for file in files:
 
@@ -289,10 +290,13 @@ class CodeAnalyser:
 
             file['AccumulatedCodeScore'] = codeSummary.getAccumulatedScore()
             file['DetailedScoreDict'] = codeSummary.getDetailedScoreDic()
-            file['BaseScore'] = 0
+            file['BaseScore'] = codeSummary.getBaseScore()
+            commitscore += codeSummary.getAccumulatedScore()
             jsonobject['CommitedFiles'][i] = file
             print(jsonobject['CommitedFiles'][i])
             i += 1
+        commitscore = commitscore/len(files)
+        jsonobject['AverageCommitScore'] = commitscore
         return jsonobject
         #file = "/Users/magnus/Documents/GitHub/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
         #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Events/Handlers/ModulesEventHandler.cs"
