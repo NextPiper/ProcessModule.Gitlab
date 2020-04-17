@@ -1,10 +1,10 @@
-import re as regex
+import regex
 
 
 class LanguageDescriptor:
 
     cSharpMethod = regex.compile(
-        r'\b(public|private|internal|protected)\s*(static|virtual|abstract)?\s*[a-zA-Z<>]*\s[a-zA-Z1-9_<>]+\s?\s*[a-zA-Z1-9<>_]*\((([a-zA-Z1-9_="\[\]\<\>]*\s*[a-zA-Z1-9_="]*\s*)[,]?\s*)+\)')
+        r'\b(public|private|internal|protected)\s*(static|virtual|abstract)?\s*[a-zA-Z<>]*\s[a-zA-Z1-9_<>]+\s?\s*[a-zA-Z1-9<>_]*\((([a-zA-Z1-9_="_:,\[\]\<\>]*\s*[a-zA-Z1-9_=",:_]*\s*)[,]?\s*)+\)')
     reDictonary = {'.cs': cSharpMethod }
 
     def __init__(self, lang_prefix, commentTokens, methodOperators):

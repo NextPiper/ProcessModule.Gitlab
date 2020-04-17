@@ -1,5 +1,6 @@
 import math
 import re as regex
+import base64
 
 # Local imports
 from CodeSummary import CodeSummary
@@ -11,7 +12,7 @@ from MethodInfo import MethodInfo
 AVG_LINE_LENGTH = "average_line_length"
 AVG_LINE_CONST = 0.4
 
-FILE_LENGTH ="class_length"
+FILE_LENGTH = "class_length"
 FILE_LENGTH_CONST = 1.0
 
 SYMBOL_RATIO = "symbol_ratio"
@@ -40,20 +41,18 @@ LONG_METHOD_PENALTY_CONST = 1.0
 
 TOKEN_REGEX = regex.compile(r'(\W+)', flags=regex.UNICODE)
 
+
 class CodeAnalyser:
 
     def __init__(self, language_Descriptor):
         self.language_Descriptor = language_Descriptor
+        print(SYMBOL_RATIO)
 
-    def compute_code_score(self, filePath):
-        # Open the filePath
-        file = open(filePath, "r")
-        # Read the code from the file
-        code = file.read()
+    def compute_code_score(self, file):
         # break the file up into array of lines with break on ("\n")
-        lines = code.split('\n')
+        lines = file.split('\n')
         # Pass the lines array an compute a detailed score
-        score_dic = self.compute_detailed_code_score(code, lines)
+        score_dic = self.compute_detailed_code_score(file, lines)
 
         return CodeSummary(score_dic)
 
@@ -270,23 +269,30 @@ class CodeAnalyser:
             return accumulatedInfoScore / len(methodInfoList)
 
 
-if __name__ == '__main__':
+    def score_files_readability(self, jsonobject):
+        i = 0
+        files = jsonobject['CommitedFiles']
+        for file in files:
 
-    #file = "/Users/magnus/Documents/GitHub/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
-    #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Events/Handlers/ModulesEventHandler.cs"
-    #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Commands/Handlers/BackgroundProcessCommandHandler.cs"
-    #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
-    #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe/Controllers/ModuleController.cs"
-    file = "/Users/ulriksandberg/Desktop/Reactors/Reactors/ClientApp/src/App.js"
+            decodefile = base64.b64decode(file['content'])
+            decodefile = decodefile.decode('utf-8')
+            codeSummary = self.compute_code_score(decodefile)
 
-    csharpLanguageDescriptor = LanguageDescriptor(
-        lang_prefix=".cs",
-        commentTokens=["//", "/*"],
-        methodOperators=['if','else','do','while','for','foreach','catch','try','get','set'])
+            print(codeSummary.getDetailedScoreDic())
+            print(codeSummary.getAccumulatedScore())
 
-    analyser = CodeAnalyser(csharpLanguageDescriptor)
+            file['AccumulatedCodeScore'] = codeSummary.getAccumulatedScore()
+            file['DetailedScoreDict'] = codeSummary.getDetailedScoreDic()
+            file['BaseScore'] = 0
+            jsonobject['CommitedFiles'][i] = file
+            print(jsonobject['CommitedFiles'][i])
+            i += 1
+        return jsonobject
+        #file = "/Users/magnus/Documents/GitHub/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
+        #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Events/Handlers/ModulesEventHandler.cs"
+        #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Commands/Handlers/BackgroundProcessCommandHandler.cs"
+        #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe.Core/Domain/Kubernetes/RabbitMQ/RabbitDeploymentManager.cs"
+        #file = "/Users/ulriksandberg/Projects/NextPipe/NextPipe/NextPipe/Controllers/ModuleController.cs"
+        #file = "/Users/ulriksandberg/Desktop/Reactors/Reactors/ClientApp/src/App.js"
 
-    codeSummary = analyser.compute_code_score(file)
 
-    print(codeSummary.getDetailedScoreDic())
-    print(codeSummary.getAccumulatedScore())
