@@ -46,7 +46,6 @@ class CodeAnalyser:
 
     def __init__(self, language_Descriptor):
         self.language_Descriptor = language_Descriptor
-        print(SYMBOL_RATIO)
 
     def compute_code_score(self, file):
         # break the file up into array of lines with break on ("\n")

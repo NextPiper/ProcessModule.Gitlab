@@ -25,7 +25,7 @@ class LanguageDescriptor:
         match = re.search(stripLine)
         if match:
             return True
-        return
+        return False
 
     def identify_operator(self, line):
         for methodOperator in self.methodOperators:
