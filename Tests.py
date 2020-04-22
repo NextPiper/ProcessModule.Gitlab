@@ -34,7 +34,7 @@ class TestClass(unittest.TestCase):
         i = round(self.codeanalyser.compute_average_code_block_size(self.CsharpClass),2)
         self.assertAlmostEqual(i, 3.70,delta=0.1)
 
-    
+
 
 if __name__ == '__main__':
     unittest.main()
