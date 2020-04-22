@@ -98,7 +98,7 @@ class MethodInfo:
 
         line = originLine
         if self.previousLineInfoRequired(originLine):
-            line = self.previousLine + originLine
+            line = str(self.previousLine) + str(originLine)
 
         node = Node(self.methodTreeCursor, line)
         self.methodTreeCursor.appendChild(node)
